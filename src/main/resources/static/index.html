@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quote of the Day</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(to right, #6a11cb, #2575fc);
+            font-family: Arial, sans-serif;
+        }
+        .quote-container {
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            max-width: 400px;
+        }
+        h1 {
+            font-size: 24px;
+            color: #333;
+        }
+        p {
+            font-size: 18px;
+            color: #555;
+            font-style: italic;
+        }
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            margin: 0 10px;
+            border: none;
+            border-radius: 10px;
+            background-color: #6a11cb;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2575fc;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 10px;
+            background: #e0e0e0;
+            border-radius: 5px;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        .progress {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #ff7e5f, #feb47b);
+        }
+    </style>
+</head>
+<body>
+<div class="quote-container">
+    <h1>Quote of the Day</h1>
+    <p id="quote">Loading...</p>
+    <div class="progress-bar">
+        <div id="progress" class="progress"></div>
+    </div>
+    <div class="button-container">
+        <button onclick="previousQuote()">Previous</button>
+        <button onclick="nextQuote()">Next</button>
+    </div>
+</div>
+
+<script>
+    const quoteElement = document.getElementById('quote');
+    const progressBar = document.getElementById('progress');
+    const quotes = [];
+    let currentIndex = -1;
+    let progressInterval;
+
+    async function fetchQuote() {
+        try {
+            const response = await fetch('http://localhost:8080/quote');
+            const quote = await response.text();
+            if (quotes[currentIndex] !== quote) {
+                quotes.push(quote);
+                currentIndex = quotes.length - 1;
+            }
+            quoteElement.textContent = quote;
+            startProgressBar();
+        } catch (error) {
+            console.error('Error fetching quote:', error);
+            quoteElement.textContent = 'Failed to load quote';
+        }
+    }
+
+    function previousQuote() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            quoteElement.textContent = quotes[currentIndex];
+            startProgressBar();
+        }
+    }
+
+    function nextQuote() {
+        if (currentIndex < quotes.length - 1) {
+            currentIndex++;
+            quoteElement.textContent = quotes[currentIndex];
+            startProgressBar();
+        } else {
+            fetchQuote();
+        }
+    }
+
+    function startProgressBar() {
+        clearInterval(progressInterval);
+        progressBar.style.width = '0%';
+        let width = 0;
+        progressInterval = setInterval(() => {
+            width += 1;
+            progressBar.style.width = width + '%';
+            if (width >= 100) {
+                clearInterval(progressInterval);
+                fetchQuote();
+            }
+        }, 50);
+    }
+
+    fetchQuote();
+</script>
+</body>
+</html>
