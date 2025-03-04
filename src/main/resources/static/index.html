@@ -86,7 +86,7 @@
 
     async function fetchQuote() {
         try {
-            const response = await fetch('http://localhost:8080/quote');
+            const response = await fetch('/api/v1/quote');
             const quote = await response.text();
             if (quotes[currentIndex] !== quote) {
                 quotes.push(quote);

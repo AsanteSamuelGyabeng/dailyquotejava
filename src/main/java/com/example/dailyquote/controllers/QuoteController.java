@@ -1,12 +1,14 @@
 package com.example.dailyquote.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.Random;
 
 @RestController
+@RequestMapping("/api/v1/quote")
 public class QuoteController {
     private final List<String> quotes = List.of(
             "The only way to do great work is to love what you do. - Steve Jobs",
@@ -23,7 +25,7 @@ public class QuoteController {
 
     private final Random random = new Random();
 
-    @GetMapping("/quote")
+    @GetMapping
     public String getQuoteOfTheDay() {
         int index = random.nextInt(quotes.size());
         return quotes.get(index);
